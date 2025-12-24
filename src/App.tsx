@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { Dashboard } from './components/Dashboard';
-import { WorkoutsList } from './components/WorkoutsList';
+import { DashboardVariant } from './components/DashboardVariant';
+import { DashboardMaterial } from './components/dashboard/DashboardMaterial';
+import { DashboardGlass } from './components/dashboard/DashboardGlass';
+import { DashboardDark } from './components/dashboard/DashboardDark';
+import { DashboardNeo } from './components/dashboard/DashboardNeo';
+import { DashboardVibrant } from './components/dashboard/DashboardVibrant';
+import { WorkoutsThemed } from './components/workouts/WorkoutsThemed';
+import { CalendarThemed } from './components/calendar/CalendarThemed';
+import { StatsThemed } from './components/stats/StatsThemed';
+import { MiscThemed } from './components/MiscThemed';
 import { CreateWorkout } from './components/CreateWorkout';
 import { WorkoutDetail } from './components/WorkoutDetail';
-import { Calendar } from './components/Calendar';
-import { Stats } from './components/Stats';
-import { Misc } from './components/Misc';
+import { VariantSwitcher, DesignVariant } from './components/VariantSwitcher';
+import { themes } from './lib/themes';
 import { Home, Calendar as CalendarIcon, TrendingUp, ListChecks, MoreHorizontal } from 'lucide-react';
 
 type Screen = 'dashboard' | 'workouts' | 'calendar' | 'stats' | 'misc' | 'create' | 'detail';
@@ -13,6 +21,9 @@ type Screen = 'dashboard' | 'workouts' | 'calendar' | 'stats' | 'misc' | 'create
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('dashboard');
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
+  const [variant, setVariant] = useState<DesignVariant>('material');
+
+  const theme = themes[variant];
 
   const handleViewWorkout = (id: string) => {
     setSelectedWorkoutId(id);
@@ -30,26 +41,42 @@ export default function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'dashboard':
-        return <Dashboard onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+        switch (variant) {
+          case 'material':
+            return <DashboardMaterial onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+          case 'glassmorphism':
+            return <DashboardGlass onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+          case 'dark':
+            return <DashboardDark onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+          case 'neo':
+            return <DashboardNeo onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+          case 'vibrant':
+            return <DashboardVibrant onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+          default:
+            return <DashboardMaterial onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+        }
       case 'workouts':
-        return <WorkoutsList onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+        return <WorkoutsThemed variant={variant} onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
       case 'calendar':
-        return <Calendar onCreateWorkout={() => setCurrentScreen('create')} />;
+        return <CalendarThemed variant={variant} onCreateWorkout={() => setCurrentScreen('create')} />;
       case 'stats':
-        return <Stats />;
+        return <StatsThemed variant={variant} />;
       case 'misc':
-        return <Misc />;
+        return <MiscThemed variant={variant} />;
       case 'create':
         return <CreateWorkout onBack={handleBackToDashboard} onSave={handleBackToWorkouts} />;
       case 'detail':
         return <WorkoutDetail workoutId={selectedWorkoutId} onBack={handleBackToWorkouts} />;
       default:
-        return <Dashboard onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
+        return <DashboardMaterial onViewWorkout={handleViewWorkout} onCreateWorkout={() => setCurrentScreen('create')} />;
     }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#F5F5F5] max-w-md mx-auto">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-purple-50 to-blue-50 max-w-md mx-auto relative">
+      {/* Variant Switcher */}
+      <VariantSwitcher currentVariant={variant} onVariantChange={setVariant} />
+
       {/* Main Content */}
       <div className="flex-1 overflow-auto pb-20">
         {renderScreen()}
@@ -57,7 +84,7 @@ export default function App() {
 
       {/* Bottom Navigation Bar */}
       {currentScreen !== 'create' && currentScreen !== 'detail' && (
-        <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 safe-area-inset-bottom">
+        <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t border-purple-200 safe-area-inset-bottom">
           <nav className="flex items-center justify-around h-16 px-2">
             <button
               onClick={() => setCurrentScreen('dashboard')}
