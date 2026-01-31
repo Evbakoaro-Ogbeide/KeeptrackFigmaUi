@@ -9,6 +9,7 @@ import { DashboardVibrant } from './components/dashboard/DashboardVibrant';
 import { WorkoutsThemed } from './components/workouts/WorkoutsThemed';
 import { CalendarThemed } from './components/calendar/CalendarThemed';
 import { StatsThemed } from './components/stats/StatsThemed';
+import { StatsPageEnhanced } from './components/stats/StatsPageEnhanced';
 import { MiscThemed } from './components/MiscThemed';
 import { CreateWorkout } from './components/CreateWorkout';
 import { WorkoutDetail } from './components/WorkoutDetail';
@@ -60,7 +61,7 @@ export default function App() {
       case 'calendar':
         return <CalendarThemed variant={variant} onCreateWorkout={() => setCurrentScreen('create')} />;
       case 'stats':
-        return <StatsThemed variant={variant} />;
+        return <StatsPageEnhanced variant={variant} />;
       case 'misc':
         return <MiscThemed variant={variant} />;
       case 'create':
